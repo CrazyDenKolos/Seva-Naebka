@@ -515,7 +515,11 @@
 /* Offline replacement for Bootstrap controls removed by single-file saving. */
 (() => {
   const baseUrl = 'https://univer.dvfu.ru';
-  document.querySelectorAll('a[href^="/"]').forEach((link) => {
+  // The saved page itself is the local pass-order page, so keep this link local.
+  document.querySelectorAll('a[href="/pass"]').forEach((link) => {
+    link.href = window.location.href.split('#')[0];
+  });
+  document.querySelectorAll('a[href^="/"]:not([href="/pass"])').forEach((link) => {
     link.href = new URL(link.getAttribute('href'), baseUrl).href;
   });
 
