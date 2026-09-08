@@ -498,7 +498,7 @@
 <script>
 /* Local controls replacing removed authenticated-site scripts. */
 (() => {
-  const localPassUrl = new URL('dvfu-pass-interactive.html', window.location.href).href;
+  const localPassUrl = new URL('univer.dvfu.ru.html', window.location.href).href;
   document.querySelectorAll('a[data-service-name="pass"]').forEach((link) => {
     link.href = localPassUrl;
   });
