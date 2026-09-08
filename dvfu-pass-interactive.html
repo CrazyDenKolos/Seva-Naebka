@@ -480,6 +480,27 @@
     link.href = localPassUrl;
   });
 
+  const mobileMenu = document.getElementById('menu');
+  const mobileMenuButton = document.getElementById('mobileMenuOpen');
+  const mobileMenuBlur = document.getElementById('bg-blur');
+  const setMobileMenu = (open) => {
+    if (!mobileMenu || !mobileMenuButton || !mobileMenuBlur) return;
+    mobileMenu.style.display = open ? 'block' : 'none';
+    mobileMenuBlur.style.display = open ? 'block' : 'none';
+    mobileMenuButton.classList.toggle('is-active', open);
+    mobileMenuButton.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+
+  mobileMenuButton?.setAttribute('aria-expanded', 'false');
+  mobileMenuButton?.addEventListener('click', () => {
+    setMobileMenu(mobileMenu?.style.display === 'none');
+  });
+  mobileMenuBlur?.addEventListener('click', () => setMobileMenu(false));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setMobileMenu(false);
+  });
+
   const closeMenus = (except) => document.querySelectorAll('.dropdown-menu.show').forEach((menu) => {
     if (menu !== except) {
       menu.classList.remove('show');
