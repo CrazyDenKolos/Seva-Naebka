@@ -472,6 +472,29 @@
 <!-- /Top.Mail.Ru counter -->
 
 
+<style>
+/* Keep the profile menu anchored to its icon after authenticated-site scripts are removed. */
+.actions-nav {
+  position: relative;
+}
+
+.actions-nav .d-inline > .dropdown-menu {
+  top: 100%;
+  right: 0.5rem;
+  left: auto;
+  margin-top: 0.5rem;
+  transform: none !important;
+}
+
+@media (max-width: 991.98px) {
+  .actions-nav .d-inline > .dropdown-menu {
+    position: fixed;
+    right: 0.5rem;
+    left: auto;
+    margin-top: 0;
+  }
+}
+</style>
 <script>
 /* Local controls replacing removed authenticated-site scripts. */
 (() => {
@@ -501,6 +524,30 @@
     if (event.key === 'Escape') setMobileMenu(false);
   });
 
+  const notificationPopup = document.querySelector('.notification-popup');
+  const notificationTrigger = notificationPopup?.parentElement;
+  const closeNotifications = () => notificationPopup?.classList.add('d-none');
+  if (notificationPopup && notificationTrigger) {
+    notificationTrigger.setAttribute('role', 'button');
+    notificationTrigger.setAttribute('tabindex', '0');
+    notificationTrigger.setAttribute('aria-expanded', 'false');
+    const toggleNotifications = () => {
+      const open = notificationPopup.classList.contains('d-none');
+      notificationPopup.classList.toggle('d-none', !open);
+      notificationTrigger.setAttribute('aria-expanded', String(open));
+    };
+    notificationTrigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleNotifications();
+    });
+    notificationTrigger.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleNotifications();
+      }
+    });
+  }
+
   const closeMenus = (except) => document.querySelectorAll('.dropdown-menu.show').forEach((menu) => {
     if (menu !== except) {
       menu.classList.remove('show');
@@ -508,6 +555,19 @@
       menu.parentElement?.querySelector('[data-toggle="dropdown"]')?.setAttribute('aria-expanded', 'false');
     }
   });
+
+  const positionProfileMenu = (dropdown, menu) => {
+    if (!menu.matches('.actions-nav .d-inline > .dropdown-menu')) return;
+    if (window.matchMedia('(max-width: 991.98px)').matches) {
+      menu.style.top = `${dropdown.getBoundingClientRect().bottom + 8}px`;
+      menu.style.right = '0.5rem';
+      menu.style.left = 'auto';
+    } else {
+      menu.style.removeProperty('top');
+      menu.style.removeProperty('right');
+      menu.style.removeProperty('left');
+    }
+  };
 
   document.addEventListener('click', (event) => {
     const dropdown = event.target.closest('[data-toggle="dropdown"]');
@@ -520,6 +580,7 @@
       menu.classList.toggle('show', open);
       menu.parentElement?.classList.toggle('show', open);
       dropdown.setAttribute('aria-expanded', String(open));
+      if (open) positionProfileMenu(dropdown, menu);
       return;
     }
 
@@ -541,6 +602,7 @@
     }
 
     if (!event.target.closest('.dropdown-menu')) closeMenus();
+    if (!event.target.closest('.notification-popup, .nav-link.pl-0')) closeNotifications();
   });
 })();
 </script>
